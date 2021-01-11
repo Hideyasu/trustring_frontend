@@ -3,14 +3,16 @@
     <v-container v-show="!chartShowFlag">
       <v-row>
         <v-col
-          v-for="question in questions"
+          v-for="question in questions.slice(
+            (page - 1) * separateNumber,
+            page * separateNumber
+          )"
           :key="question.content"
           cols="12"
           sm="4"
         >
           <v-card class="mx-auto">
             <v-card-title>{{ question.content }}</v-card-title>
-            <v-card-text>{{ question.type }}</v-card-text>
 
             <v-divider class="mx-4"></v-divider>
 
@@ -26,6 +28,14 @@
               </v-radio-group>
             </v-card-actions>
           </v-card>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col align="center">
+          <v-pagination
+            v-model="page"
+            :length="questions.length / separateNumber"
+          ></v-pagination>
         </v-col>
       </v-row>
       <v-row>
@@ -64,7 +74,9 @@ export default {
       e1: 0,
       chartShowFlag: false,
       result: {},
-      questions: [
+      page: 1,
+      separateNumber: 9,
+      questions: this.arrayShuffle([
         {
           type: '分析型',
           content: '筋道を通す',
@@ -245,10 +257,19 @@ export default {
           content: '直感で人を判断する',
           value: 0,
         },
-      ],
+      ]),
     }
   },
   methods: {
+    arrayShuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const r = Math.floor(Math.random() * (i + 1))
+        const tmp = array[i]
+        array[i] = array[r]
+        array[r] = tmp
+      }
+      return array
+    },
     showResult() {
       const analysisTotal = this.questions.reduce(function (sum, element) {
         if (element.type !== '分析型') {
