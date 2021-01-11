@@ -14,6 +14,11 @@ export default {
       options: {
         responsive: true,
         maintainAspectRatio: false,
+        legend: {
+          labels: {
+            fontColor: '#ffffff',
+          },
+        },
       },
     }
   },
