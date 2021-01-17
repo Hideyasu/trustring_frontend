@@ -17,14 +17,18 @@
             <v-divider class="mx-4"></v-divider>
 
             <v-card-actions>
-              <v-radio-group
-                v-model="question.value"
-                row
-                style="margin-left: 5px"
-              >
+              <v-radio-group v-model="question.value" style="margin-left: 5px">
                 <v-radio label="あてはまらない" :value="0"></v-radio>
-                <v-radio label="どちらともいえない" :value="1"></v-radio>
-                <v-radio label="あてはまる" :value="2"></v-radio>
+                <v-radio
+                  label="どちらかというとあてはまらない"
+                  :value="1"
+                ></v-radio>
+                <v-radio label="どちらともいえない" :value="2"></v-radio>
+                <v-radio
+                  label="どちらかというとあてはまる"
+                  :value="3"
+                ></v-radio>
+                <v-radio label="あてはまる" :value="4"></v-radio>
               </v-radio-group>
             </v-card-actions>
           </v-card>
