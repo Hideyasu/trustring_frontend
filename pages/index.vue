@@ -56,7 +56,26 @@
         <PieChart :result="result" />
       </v-card-text>
       <v-divider></v-divider>
-      <v-card-actions>
+      <v-card align="center">
+        <v-card-text class="white--text">
+          診断結果を送信するにはお名前を入力して、送信ボタンを押してください
+        </v-card-text>
+        <v-form ref="form" v-model="valid" lazy-validation>
+          <v-text-field
+            v-model="name"
+            label="お名前"
+            :rules="nameRules"
+            style="margin-left: 15px; margin-right: 15px"
+          ></v-text-field>
+          <v-card-actions style="display: inline-block">
+            <v-btn color="primary" :disabled="!valid" @click="postResult"
+              >送信</v-btn
+            >
+          </v-card-actions>
+        </v-form>
+      </v-card>
+      <v-divider></v-divider>
+      <v-card-actions class="mt-6">
         <v-spacer></v-spacer>
         <v-btn color="warning" @click="chartShowFlag = false">
           診断にもどる
@@ -77,9 +96,16 @@ export default {
     return {
       e1: 0,
       chartShowFlag: false,
+      name: '',
+      nameRules: [(v) => !!v || '名前を入力してください'],
+      valid: true,
       result: {},
       page: 1,
       separateNumber: 9,
+      analysisTotal: 0,
+      conceptTotal: 0,
+      structureTotal: 0,
+      communicationTotal: 0,
       questions: this.arrayShuffle([
         {
           type: '分析型',
@@ -275,25 +301,25 @@ export default {
       return array
     },
     showResult() {
-      const analysisTotal = this.questions.reduce(function (sum, element) {
+      this.analysisTotal = this.questions.reduce(function (sum, element) {
         if (element.type !== '分析型') {
           return sum
         }
         return sum + element.value
       }, 0)
-      const conceptTotal = this.questions.reduce(function (sum, element) {
+      this.conceptTotal = this.questions.reduce(function (sum, element) {
         if (element.type !== 'コンセプト型') {
           return sum
         }
         return sum + element.value
       }, 0)
-      const structureTotal = this.questions.reduce(function (sum, element) {
+      this.structureTotal = this.questions.reduce(function (sum, element) {
         if (element.type !== '構造型') {
           return sum
         }
         return sum + element.value
       }, 0)
-      const communicationTotal = this.questions.reduce(function (sum, element) {
+      this.communicationTotal = this.questions.reduce(function (sum, element) {
         if (element.type !== '社交型') {
           return sum
         }
@@ -306,15 +332,43 @@ export default {
             label: ['Data One'],
             backgroundColor: ['#ffd900', '#e60033', '#3eb370', '#0095d9'],
             data: [
-              conceptTotal,
-              communicationTotal,
-              structureTotal,
-              analysisTotal,
+              this.conceptTotal,
+              this.communicationTotal,
+              this.structureTotal,
+              this.analysisTotal,
             ],
           },
         ],
       }
       this.chartShowFlag = true
+    },
+    postResult() {
+      if (!this.$refs.form.validate()) {
+        return
+      }
+      this.$axios
+        .get(
+          'https://script.google.com/macros/s/AKfycbwHkHmAscQsHpU_qm0M_ZYQdid-ZP9haO5SMSRghr5SzdPPRf8/exec',
+          {
+            params: {
+              mode: 'create',
+              name: this.name,
+              conceptTotal: this.conceptTotal,
+              communicationTotal: this.communicationTotal,
+              structureTotal: this.structureTotal,
+              analysisTotal: this.analysisTotal,
+            },
+          }
+        )
+        .then(
+          (response) => {
+            alert('送信完了しました')
+          },
+          (error) => {
+            console.log(error)
+            alert('失敗しました。時間をおいてから再度やり直してください')
+          }
+        )
     },
   },
 }
