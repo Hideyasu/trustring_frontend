@@ -73,14 +73,12 @@
             >
           </v-card-actions>
         </v-form>
+        <v-card-actions style="display: inline-block">
+          <v-btn color="warning" @click="chartShowFlag = false">
+            診断にもどる
+          </v-btn>
+        </v-card-actions>
       </v-card>
-      <v-divider></v-divider>
-      <v-card-actions class="mt-6">
-        <v-spacer></v-spacer>
-        <v-btn color="warning" @click="chartShowFlag = false">
-          診断にもどる
-        </v-btn>
-      </v-card-actions>
     </v-card>
   </v-flex>
 </template>
