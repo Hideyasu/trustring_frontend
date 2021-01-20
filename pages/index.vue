@@ -1,6 +1,27 @@
 <template>
   <v-flex>
-    <v-container v-show="!chartShowFlag">
+    <v-card v-if="!isNameSet">
+      <v-card-title class="headline primary white--text" primary-title>
+        簡易EG診断
+      </v-card-title>
+      <v-card align="center">
+        <v-card-text class="white--text">
+          お名前を入力してください
+        </v-card-text>
+        <v-form ref="form" v-model="valid" lazy-validation>
+          <v-text-field
+            v-model="name"
+            label="お名前"
+            :rules="nameRules"
+            style="margin-left: 15px; margin-right: 15px"
+          ></v-text-field>
+          <v-card-actions style="display: inline-block">
+            <v-btn color="primary" @click="setIsNameSet">決定</v-btn>
+          </v-card-actions>
+        </v-form>
+      </v-card>
+    </v-card>
+    <v-container v-else-if="!chartShowFlag">
       <v-row>
         <v-col
           v-for="question in questions.slice(
@@ -47,8 +68,15 @@
           <v-btn color="primary" @click="showResult"> 結果をみる </v-btn>
         </v-col>
       </v-row>
+      <v-row>
+        <v-col align="center">
+          <v-btn color="warning" @click="isNameSet = false">
+            お名前の入力に戻る
+          </v-btn>
+        </v-col>
+      </v-row>
     </v-container>
-    <v-card v-show="chartShowFlag">
+    <v-card v-else-if="chartShowFlag">
       <v-card-title class="headline primary white--text" primary-title>
         診断結果
       </v-card-title>
@@ -57,22 +85,6 @@
       </v-card-text>
       <v-divider></v-divider>
       <v-card align="center">
-        <v-card-text class="white--text">
-          診断結果を送信するにはお名前を入力して、送信ボタンを押してください
-        </v-card-text>
-        <v-form ref="form" v-model="valid" lazy-validation>
-          <v-text-field
-            v-model="name"
-            label="お名前"
-            :rules="nameRules"
-            style="margin-left: 15px; margin-right: 15px"
-          ></v-text-field>
-          <v-card-actions style="display: inline-block">
-            <v-btn color="primary" :disabled="!valid" @click="postResult"
-              >送信</v-btn
-            >
-          </v-card-actions>
-        </v-form>
         <v-card-actions style="display: inline-block">
           <v-btn color="warning" @click="chartShowFlag = false">
             診断にもどる
@@ -95,6 +107,7 @@ export default {
       e1: 0,
       chartShowFlag: false,
       name: '',
+      isNameSet: false,
       nameRules: [(v) => !!v || '名前を入力してください'],
       valid: true,
       result: {},
@@ -298,6 +311,12 @@ export default {
       }
       return array
     },
+    setIsNameSet() {
+      if (!this.$refs.form.validate()) {
+        return
+      }
+      this.isNameSet = true
+    },
     showResult() {
       this.analysisTotal = this.questions.reduce(function (sum, element) {
         if (element.type !== '分析型') {
@@ -339,11 +358,7 @@ export default {
         ],
       }
       this.chartShowFlag = true
-    },
-    postResult() {
-      if (!this.$refs.form.validate()) {
-        return
-      }
+
       this.$axios
         .get(
           'https://script.google.com/macros/s/AKfycbwHkHmAscQsHpU_qm0M_ZYQdid-ZP9haO5SMSRghr5SzdPPRf8/exec',
@@ -360,11 +375,11 @@ export default {
         )
         .then(
           (response) => {
-            alert('送信完了しました')
+            console.log('送信完了しました')
           },
           (error) => {
             console.log(error)
-            alert('失敗しました。時間をおいてから再度やり直してください')
+            alert('送信に失敗しました。時間をおいてから再度やり直してください')
           }
         )
     },
