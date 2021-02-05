@@ -8,7 +8,7 @@
         <v-card-text class="white--text">
           お名前を入力してください
         </v-card-text>
-        <v-form ref="form" v-model="valid" lazy-validation>
+        <v-form ref="form" @submit.prevent v-model="valid" lazy-validation>
           <v-text-field
             v-model="name"
             label="お名前"
@@ -39,17 +39,12 @@
 
             <v-card-actions>
               <v-radio-group v-model="question.value" style="margin-left: 5px">
-                <v-radio label="あてはまらない" :value="0"></v-radio>
                 <v-radio
-                  label="どちらかというとあてはまらない"
-                  :value="1"
+                  v-for="radioComponent in radioComponents"
+                  :key="radioComponent.label"
+                  :label="radioComponent.label"
+                  :value="radioComponent.value"
                 ></v-radio>
-                <v-radio label="どちらともいえない" :value="2"></v-radio>
-                <v-radio
-                  label="どちらかというとあてはまる"
-                  :value="3"
-                ></v-radio>
-                <v-radio label="あてはまる" :value="4"></v-radio>
               </v-radio-group>
             </v-card-actions>
           </v-card>
@@ -83,14 +78,6 @@
       <v-card-text class="mt-4">
         <PieChart :result="result" />
       </v-card-text>
-      <v-divider></v-divider>
-      <v-card align="center">
-        <v-card-actions style="display: inline-block">
-          <v-btn color="warning" @click="chartShowFlag = false">
-            診断にもどる
-          </v-btn>
-        </v-card-actions>
-      </v-card>
     </v-card>
   </v-flex>
 </template>
@@ -117,183 +104,241 @@ export default {
       conceptTotal: 0,
       structureTotal: 0,
       communicationTotal: 0,
+      radioComponents: [
+        {
+          label: 'あてはまらない',
+          value: 1,
+        },
+        {
+          label: 'どちらかというとあてはまらない',
+          value: 2,
+        },
+        {
+          label: 'どちらともいえない',
+          value: 3,
+        },
+        {
+          label: 'どちらかというとあてはまる',
+          value: 4,
+        },
+        {
+          label: 'あてはまる',
+          value: 5,
+        },
+      ],
       questions: this.arrayShuffle([
         {
+          category: 'EG',
           type: '分析型',
           content: '筋道を通す',
           value: 0,
         },
         {
+          category: 'EG',
           type: '分析型',
           content: '理性的に考える',
           value: 0,
         },
         {
+          category: 'EG',
           type: '分析型',
           content: '知的に考えるのを好む',
           value: 0,
         },
         {
+          category: 'EG',
           type: '分析型',
           content: '客観的に物事をみる',
           value: 0,
         },
         {
+          category: 'EG',
           type: '分析型',
           content: '理論的な考え方をする',
           value: 0,
         },
         {
+          category: 'EG',
           type: '分析型',
           content: '懐疑的',
           value: 0,
         },
         {
+          category: 'EG',
           type: '分析型',
           content: '批判的',
           value: 0,
         },
         {
+          category: 'EG',
           type: '分析型',
           content: '研究熱心',
           value: 0,
         },
         {
+          category: 'EG',
           type: '分析型',
           content: '矛盾は追求したい',
           value: 0,
         },
         {
+          category: 'EG',
           type: 'コンセプト型',
           content: '創意工夫に富む',
           value: 0,
         },
         {
+          category: 'EG',
           type: 'コンセプト型',
           content: '独創的',
           value: 0,
         },
         {
+          category: 'EG',
           type: 'コンセプト型',
           content: '革新的',
           value: 0,
         },
         {
+          category: 'EG',
           type: 'コンセプト型',
           content: '想像力が豊か',
           value: 0,
         },
         {
+          category: 'EG',
           type: 'コンセプト型',
           content: '直感でアイデアを判断する',
           value: 0,
         },
         {
+          category: 'EG',
           type: 'コンセプト型',
           content: '幅広い視野を持つ',
           value: 0,
         },
         {
+          category: 'EG',
           type: 'コンセプト型',
           content: '人と違うことを好む',
           value: 0,
         },
         {
+          category: 'EG',
           type: 'コンセプト型',
           content: '変化を好む',
           value: 0,
         },
         {
+          category: 'EG',
           type: 'コンセプト型',
           content: '飽きっぽい',
           value: 0,
         },
         {
+          category: 'EG',
           type: '構造型',
           content: '細部にこだわる',
           value: 0,
         },
         {
+          category: 'EG',
           type: '構造型',
           content: '規律を守る',
           value: 0,
         },
         {
+          category: 'EG',
           type: '構造型',
           content: '秩序を重んじる',
           value: 0,
         },
         {
+          category: 'EG',
           type: '構造型',
           content: 'ルールを守る',
           value: 0,
         },
         {
+          category: 'EG',
           type: '構造型',
           content: '手順を重視する',
           value: 0,
         },
         {
+          category: 'EG',
           type: '構造型',
           content: '現実的',
           value: 0,
         },
         {
+          category: 'EG',
           type: '構造型',
           content: '整頓が得意',
           value: 0,
         },
         {
+          category: 'EG',
           type: '構造型',
           content: '伝統重視',
           value: 0,
         },
         {
+          category: 'EG',
           type: '構造型',
           content: '行動の予測がつきやすい',
           value: 0,
         },
         {
+          category: 'EG',
           type: '社交型',
           content: '人間関係を重視する',
           value: 0,
         },
         {
+          category: 'EG',
           type: '社交型',
           content: '人の気持ちがすぐわかる',
           value: 0,
         },
         {
+          category: 'EG',
           type: '社交型',
           content: '愛想がいい',
           value: 0,
         },
         {
+          category: 'EG',
           type: '社交型',
           content: '情が深い',
           value: 0,
         },
         {
+          category: 'EG',
           type: '社交型',
           content: '思いやりがある',
           value: 0,
         },
         {
+          category: 'EG',
           type: '社交型',
           content: '感情移入しやすい',
           value: 0,
         },
         {
+          category: 'EG',
           type: '社交型',
           content: '感情的',
           value: 0,
         },
         {
+          category: 'EG',
           type: '社交型',
           content: 'サポート役に回る',
           value: 0,
         },
         {
+          category: 'EG',
           type: '社交型',
           content: '直感で人を判断する',
           value: 0,
@@ -357,7 +402,14 @@ export default {
           },
         ],
       }
+
       this.chartShowFlag = true
+
+      const EGTotal =
+        this.conceptTotal +
+        this.communicationTotal +
+        this.structureTotal +
+        this.analysisTotal
 
       this.$axios
         .get(
@@ -366,10 +418,14 @@ export default {
             params: {
               mode: 'create',
               name: this.name,
-              conceptTotal: this.conceptTotal,
-              communicationTotal: this.communicationTotal,
-              structureTotal: this.structureTotal,
-              analysisTotal: this.analysisTotal,
+              conceptTotal:
+                Math.round((this.conceptTotal / EGTotal) * 100) / 100,
+              communicationTotal:
+                Math.round((this.communicationTotal / EGTotal) * 100) / 100,
+              structureTotal:
+                Math.round((this.structureTotal / EGTotal) * 100) / 100,
+              analysisTotal:
+                Math.round((this.analysisTotal / EGTotal) * 100) / 100,
             },
           }
         )

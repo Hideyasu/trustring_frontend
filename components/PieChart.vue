@@ -12,11 +12,26 @@ export default {
   data() {
     return {
       options: {
+        tooltips: {
+          enabled: true,
+          callbacks: {
+            label(tooltipItems, data) {
+              const label = data.datasets[0].data
+              const total = label.reduce(function (sum, element) {
+                return sum + element
+              }, 0)
+              const labelText = `${
+                data.labels[tooltipItems.index]
+              }:${Math.round((label[tooltipItems.index] / total) * 100)}%`
+              return labelText
+            },
+          },
+        },
         responsive: true,
         maintainAspectRatio: false,
         legend: {
           labels: {
-            fontColor: '#ffffff',
+            fontColor: '#fff',
           },
         },
       },
