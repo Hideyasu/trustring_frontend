@@ -48,6 +48,61 @@ export default {
     })
   },
   mounted() {
+    this.addPlugin({
+      afterDraw(chart, go) {
+        const ctx = chart.ctx
+        chart.data.datasets.forEach((dataset, i) => {
+          let dataSum = 0
+          dataset.data.forEach((element) => {
+            dataSum += element
+          })
+
+          const meta = chart.getDatasetMeta(i)
+          if (!meta.hidden) {
+            meta.data.forEach(function (element, index) {
+              if (dataset.data[index] / dataSum === 0) {
+                return
+              }
+              // フォントの設定
+              const fontSize = 14
+              const fontStyle = 'normal'
+              const fontFamily = 'Helvetica Neue'
+              ctx.fillStyle = '#333'
+              // 設定を適用
+              ctx.font = Chart.helpers.fontString( // eslint-disable-line
+                fontSize,
+                fontStyle,
+                fontFamily
+              )
+
+              // ラベルをパーセント表示に変更
+              const labelString = chart.data.labels[index]
+              const dataString =
+                Math.round((dataset.data[index] / dataSum) * 100).toString() +
+                '%'
+
+              // positionの設定
+              ctx.textAlign = 'center'
+              ctx.textBaseline = 'middle'
+
+              const padding = -2
+              const position = element.tooltipPosition()
+              // ツールチップに変更内容を表示
+              ctx.fillText(
+                labelString,
+                position.x,
+                position.y - fontSize / 2 - padding
+              ) // title
+              ctx.fillText(
+                dataString,
+                position.x,
+                position.y + fontSize / 2 - padding
+              ) // データの百分率
+            })
+          }
+        })
+      },
+    })
     this.renderChart(this.result, this.options)
   },
 }

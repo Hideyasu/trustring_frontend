@@ -8,7 +8,7 @@
         <v-card-text class="white--text">
           お名前を入力してください
         </v-card-text>
-        <v-form ref="form" @submit.prevent v-model="valid" lazy-validation>
+        <v-form ref="form" v-model="valid" lazy-validation @submit.prevent>
           <v-text-field
             v-model="name"
             label="お名前"
